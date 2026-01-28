@@ -41,9 +41,9 @@ class _ContactPageState extends State<ContactPage> {
       );
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Сообщение отправлено')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Сообщение отправлено')));
         _nameController.clear();
         _phoneController.clear();
         _messageController.clear();
@@ -84,10 +84,7 @@ class _ContactPageState extends State<ContactPage> {
             children: [
               const Text(
                 'Свяжитесь с нами',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 10),
               Text(
@@ -136,7 +133,7 @@ class _ContactPageState extends State<ContactPage> {
               TextFormField(
                 controller: _messageController,
                 decoration: InputDecoration(
-                  labelText: 'Сообщение',
+                  hintText: 'Сообщение',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -144,6 +141,7 @@ class _ContactPageState extends State<ContactPage> {
                   fillColor: Colors.white,
                 ),
                 maxLines: 5,
+                textAlignVertical: TextAlignVertical.top,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Введите сообщение';
@@ -178,17 +176,17 @@ class _ContactPageState extends State<ContactPage> {
               const SizedBox(height: 30),
               const Text(
                 'Контактная информация',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 15),
               _buildContactInfo(Icons.phone, '+7 (999) 123-45-67'),
               const SizedBox(height: 10),
               _buildContactInfo(Icons.email, 'info@dressshop.ru'),
               const SizedBox(height: 10),
-              _buildContactInfo(Icons.location_on, 'Москва, ул. Примерная, д. 1'),
+              _buildContactInfo(
+                Icons.location_on,
+                'Москва, ул. Примерная, д. 1',
+              ),
             ],
           ),
         ),
@@ -201,10 +199,7 @@ class _ContactPageState extends State<ContactPage> {
       children: [
         Icon(icon, color: Colors.grey[700]),
         const SizedBox(width: 10),
-        Text(
-          text,
-          style: TextStyle(color: Colors.grey[700], fontSize: 16),
-        ),
+        Text(text, style: TextStyle(color: Colors.grey[700], fontSize: 16)),
       ],
     );
   }

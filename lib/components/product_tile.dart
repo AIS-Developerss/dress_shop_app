@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/product.dart';
 import '../models/cart.dart';
+import '../providers/favorites_provider.dart';
+import '../providers/auth_provider.dart';
 import '../pages/product_detail_page.dart';
 
 class ProductTile extends StatelessWidget {
@@ -10,11 +12,45 @@ class ProductTile extends StatelessWidget {
 
   const ProductTile({super.key, required this.product, this.onTap});
 
+  void _toggleFavorite(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final favoritesProvider = Provider.of<FavoritesProvider>(
+      context,
+      listen: false,
+    );
+
+    if (!authProvider.isAuthenticated) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Войдите, чтобы добавить в избранное')),
+      );
+      return;
+    }
+
+    final isFavorite = favoritesProvider.isFavorite(product.id);
+    if (isFavorite) {
+      final favoriteId = favoritesProvider.getFavoriteId(product.id);
+      if (favoriteId != null) {
+        favoritesProvider.removeFavorite(favoriteId, product.id);
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Удалено из избранного')));
+      }
+    } else {
+      favoritesProvider.addFavorite(authProvider.user!.id, product.id);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Добавлено в избранное')));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Consumer<Cart>(
-      builder: (context, cart, _) {
-        final isInCart = cart.userCart.any((item) => item.product.id == product.id);
+    return Consumer2<Cart, FavoritesProvider>(
+      builder: (context, cart, favoritesProvider, _) {
+        final isInCart = cart.userCart.any(
+          (item) => item.product.id == product.id,
+        );
+        final isFavorite = favoritesProvider.isFavorite(product.id);
 
         return GestureDetector(
           onTap: () {
@@ -35,15 +71,39 @@ class ProductTile extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Product image
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.asset(
-                    product.imagePaths.first,
-                    height: 200,
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                  ),
+                // Product image with favorite button
+                Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.asset(
+                        product.imagePaths.first,
+                        height: 200,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                      ),
+                    ),
+                    // Favorite button
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: GestureDetector(
+                        onTap: () => _toggleFavorite(context),
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.9),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            isFavorite ? Icons.favorite : Icons.favorite_border,
+                            color: isFavorite ? Colors.red : Colors.grey[700],
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 // Description
                 Padding(

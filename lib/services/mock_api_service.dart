@@ -8,16 +8,13 @@ import '../models/favorite.dart';
 /// Для переключения на реальный API просто замените реализацию методов
 class MockApiService {
   // ============ AUTH ============
-  
+
   /// POST /api/auth/send-sms
   /// Body: { "phone": "+79991234567" }
   /// Response: { "success": true, "message": "SMS sent" }
   Future<Map<String, dynamic>> sendSms(String phone) async {
     await Future.delayed(const Duration(seconds: 1));
-    return {
-      'success': true,
-      'message': 'SMS sent',
-    };
+    return {'success': true, 'message': 'SMS sent'};
   }
 
   /// POST /api/auth/verify-sms
@@ -28,11 +25,7 @@ class MockApiService {
     return {
       'success': true,
       'token': 'mock_jwt_token_${DateTime.now().millisecondsSinceEpoch}',
-      'user': {
-        'id': 'user_1',
-        'name': 'Test User',
-        'phone': phone,
-      },
+      'user': {'id': 'user_1', 'name': 'Test User', 'phone': phone},
     };
   }
 
@@ -41,24 +34,24 @@ class MockApiService {
   /// Response: { "success": true, "message": "Registration successful, SMS sent" }
   Future<Map<String, dynamic>> register(String name, String phone) async {
     await Future.delayed(const Duration(seconds: 1));
-    return {
-      'success': true,
-      'message': 'Registration successful, SMS sent',
-    };
+    return {'success': true, 'message': 'Registration successful, SMS sent'};
   }
 
   // ============ PRODUCTS ============
-  
+
   /// GET /api/products?categoryId=xxx&search=xxx
   /// Response: { "products": [...] }
-  Future<List<Product>> getProducts({String? categoryId, String? search}) async {
+  Future<List<Product>> getProducts({
+    String? categoryId,
+    String? search,
+  }) async {
     await Future.delayed(const Duration(milliseconds: 500));
     return _mockProducts.where((product) {
       if (categoryId != null && product.categoryId != categoryId) return false;
       if (search != null && search.isNotEmpty) {
         final searchLower = search.toLowerCase();
         return product.name.toLowerCase().contains(searchLower) ||
-               product.description.toLowerCase().contains(searchLower);
+            product.description.toLowerCase().contains(searchLower);
       }
       return true;
     }).toList();
@@ -68,11 +61,14 @@ class MockApiService {
   /// Response: { "product": {...} }
   Future<Product?> getProduct(String id) async {
     await Future.delayed(const Duration(milliseconds: 500));
-    return _mockProducts.firstWhere((p) => p.id == id, orElse: () => _mockProducts.first);
+    return _mockProducts.firstWhere(
+      (p) => p.id == id,
+      orElse: () => _mockProducts.first,
+    );
   }
 
   // ============ CATEGORIES ============
-  
+
   /// GET /api/categories
   /// Response: { "categories": [...] }
   Future<List<Category>> getCategories() async {
@@ -81,7 +77,7 @@ class MockApiService {
   }
 
   // ============ FAVORITES ============
-  
+
   /// GET /api/favorites?userId=xxx
   /// Response: { "favorites": [...] }
   Future<List<Favorite>> getFavorites(String userId) async {
@@ -112,7 +108,7 @@ class MockApiService {
   }
 
   // ============ ORDERS ============
-  
+
   /// POST /api/orders
   /// Body: { "userId": "xxx", "items": [...], "deliveryAddress": "...", "phone": "...", "name": "..." }
   /// Response: { "success": true, "order": {...} }
@@ -124,10 +120,13 @@ class MockApiService {
     String? name,
   }) async {
     await Future.delayed(const Duration(seconds: 1));
-    final totalPrice = items.fold<double>(
-      0,
-      (sum, item) => sum + (double.tryParse(item.price) ?? 0) * item.quantity,
-    ).toStringAsFixed(2);
+    final totalPrice = items
+        .fold<double>(
+          0,
+          (sum, item) =>
+              sum + (double.tryParse(item.price) ?? 0) * item.quantity,
+        )
+        .toStringAsFixed(2);
 
     final order = Order(
       id: 'order_${DateTime.now().millisecondsSinceEpoch}',
@@ -155,11 +154,14 @@ class MockApiService {
   /// Response: { "order": {...} }
   Future<Order?> getOrder(String id) async {
     await Future.delayed(const Duration(milliseconds: 500));
-    return _mockOrders.firstWhere((o) => o.id == id, orElse: () => _mockOrders.first);
+    return _mockOrders.firstWhere(
+      (o) => o.id == id,
+      orElse: () => _mockOrders.first,
+    );
   }
 
   // ============ CONTACT ============
-  
+
   /// POST /api/contact
   /// Body: { "name": "...", "phone": "...", "message": "..." }
   /// Response: { "success": true, "message": "Message sent" }
@@ -169,20 +171,54 @@ class MockApiService {
     required String message,
   }) async {
     await Future.delayed(const Duration(seconds: 1));
-    return {
-      'success': true,
-      'message': 'Message sent',
-    };
+    return {'success': true, 'message': 'Message sent'};
   }
 
   // ============ MOCK DATA ============
-  
+
   final List<Product> _mockProducts = [
+    Product(
+      id: '3',
+      name: 'Zoom FREAK',
+      price: '21000',
+      description: 'Инновационный дизайн его последней фирменной обуви',
+      imagePaths: [
+        'assets/images/zoomfreak.png',
+        'assets/images/zoomfreak.png',
+      ],
+      categoryId: '1',
+      characteristics: {
+        'Материал': 'Текстиль',
+        'Подошва': 'Резина',
+        'Цвет': 'Белый/Синий',
+        'Вес': '340г',
+      },
+      availableSizes: ['39', '40', '41', '42', '43', '44', '45'],
+      stock: 8,
+    ),
+    Product(
+      id: '4',
+      name: 'Zion 2',
+      price: '7000',
+      description:
+          'Достигните новых уровней скорости и силы в обуви, разработанной для Зиона',
+      imagePaths: ['assets/images/zion2.png', 'assets/images/zion2.png'],
+      categoryId: '1',
+      characteristics: {
+        'Материал': 'Кожа',
+        'Подошва': 'Резина',
+        'Цвет': 'Черный/Оранжевый',
+        'Вес': '360г',
+      },
+      availableSizes: ['40', '41', '42', '43', '44'],
+      stock: 12,
+    ),
     Product(
       id: '1',
       name: 'Air Jordans',
       price: '14500',
-      description: 'У вас есть прыжки и скорость - зашнуруйте обувь, которая усилит то, что вы приносите на площадку',
+      description:
+          'У вас есть прыжки и скорость - зашнуруйте обувь, которая усилит то, что вы приносите на площадку',
       imagePaths: ['assets/images/jordan.png', 'assets/images/jordan.png'],
       categoryId: '1',
       characteristics: {
@@ -198,7 +234,8 @@ class MockApiService {
       id: '2',
       name: 'KD Treys',
       price: '20000',
-      description: 'Надежный ремешок на средней части стопы идеально подходит для забивания голов и защитных стоек',
+      description:
+          'Надежный ремешок на средней части стопы идеально подходит для забивания голов и защитных стоек',
       imagePaths: ['assets/images/kdtrey.png', 'assets/images/kdtrey.png'],
       categoryId: '1',
       characteristics: {
@@ -209,38 +246,6 @@ class MockApiService {
       },
       availableSizes: ['40', '41', '42', '43', '44'],
       stock: 5,
-    ),
-    Product(
-      id: '3',
-      name: 'Zoom FREAK',
-      price: '21000',
-      description: 'Инновационный дизайн его последней фирменной обуви',
-      imagePaths: ['assets/images/zoomfreak.png', 'assets/images/zoomfreak.png'],
-      categoryId: '1',
-      characteristics: {
-        'Материал': 'Текстиль',
-        'Подошва': 'Резина',
-        'Цвет': 'Белый/Синий',
-        'Вес': '340г',
-      },
-      availableSizes: ['39', '40', '41', '42', '43', '44', '45'],
-      stock: 8,
-    ),
-    Product(
-      id: '4',
-      name: 'Zion 2',
-      price: '7000',
-      description: 'Достигните новых уровней скорости и силы в обуви, разработанной для Зиона',
-      imagePaths: ['assets/images/zion2.png', 'assets/images/zion2.png'],
-      categoryId: '1',
-      characteristics: {
-        'Материал': 'Кожа',
-        'Подошва': 'Резина',
-        'Цвет': 'Черный/Оранжевый',
-        'Вес': '360г',
-      },
-      availableSizes: ['40', '41', '42', '43', '44'],
-      stock: 12,
     ),
   ];
 

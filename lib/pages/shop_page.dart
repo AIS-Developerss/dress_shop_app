@@ -20,7 +20,10 @@ class _ShopPageState extends State<ShopPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final productsProvider = Provider.of<ProductsProvider>(context, listen: false);
+      final productsProvider = Provider.of<ProductsProvider>(
+        context,
+        listen: false,
+      );
       // Загружаем категории только если ещё не загружены
       if (productsProvider.categories.isEmpty) {
         productsProvider.loadCategories();
@@ -37,23 +40,22 @@ class _ShopPageState extends State<ShopPage> {
   }
 
   void _onSearchChanged(String value) {
-    final productsProvider = Provider.of<ProductsProvider>(context, listen: false);
+    final productsProvider = Provider.of<ProductsProvider>(
+      context,
+      listen: false,
+    );
     productsProvider.setSearchQuery(value);
   }
 
   void _addToCart(product, size) {
     final cart = Provider.of<Cart>(context, listen: false);
     cart.addItemToCart(
-      CartItemModel(
-        product: product,
-        selectedSize: size,
-        quantity: 1,
-      ),
+      CartItemModel(product: product, selectedSize: size, quantity: 1),
     );
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Товар добавлен в корзину")),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text("Товар добавлен в корзину")));
   }
 
   @override
@@ -113,7 +115,8 @@ class _ShopPageState extends State<ShopPage> {
                             child: Text(
                               "Все",
                               style: TextStyle(
-                                color: productsProvider.selectedCategoryId == null
+                                color:
+                                    productsProvider.selectedCategoryId == null
                                     ? Colors.white
                                     : Colors.black,
                                 fontWeight: FontWeight.bold,
@@ -166,9 +169,7 @@ class _ShopPageState extends State<ShopPage> {
             ),
             // Products
             if (productsProvider.isLoading)
-              const Expanded(
-                child: Center(child: CircularProgressIndicator()),
-              )
+              const Expanded(child: Center(child: CircularProgressIndicator()))
             else if (productsProvider.products.isEmpty)
               Expanded(
                 child: Center(
@@ -187,7 +188,10 @@ class _ShopPageState extends State<ShopPage> {
                   children: [
                     Text(
                       "Товары",
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 24,
+                      ),
                     ),
                   ],
                 ),

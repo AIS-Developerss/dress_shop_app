@@ -14,8 +14,12 @@ class FavoritesProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
 
   Future<void> loadFavorites(String userId) async {
-    _isLoading = true;
-    notifyListeners();
+    // Показываем лоадер только при первой загрузке (когда списка ещё нет)
+    final isFirstLoad = _favoriteProducts.isEmpty && _favorites.isEmpty;
+    if (isFirstLoad) {
+      _isLoading = true;
+      notifyListeners();
+    }
     try {
       _favorites = await _apiService.getFavorites(userId);
       // Загружаем продукты для избранного

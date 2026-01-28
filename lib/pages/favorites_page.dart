@@ -21,6 +21,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
       if (authProvider.isAuthenticated) {
         final favoritesProvider =
             Provider.of<FavoritesProvider>(context, listen: false);
+        // Загружаем только если ещё не загружено (лоадер показывается только при первой загрузке)
         favoritesProvider.loadFavorites(authProvider.user!.id);
       }
     });
