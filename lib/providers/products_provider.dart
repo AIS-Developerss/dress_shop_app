@@ -18,8 +18,12 @@ class ProductsProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
 
   Future<void> loadProducts() async {
-    _isLoading = true;
-    notifyListeners();
+    // Показываем лоадер только при первой загрузке (когда списка ещё нет)
+    final isFirstLoad = _products.isEmpty;
+    if (isFirstLoad) {
+      _isLoading = true;
+      notifyListeners();
+    }
     try {
       _products = await _apiService.getProducts(
         categoryId: _selectedCategoryId,

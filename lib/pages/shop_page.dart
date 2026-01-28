@@ -21,7 +21,11 @@ class _ShopPageState extends State<ShopPage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final productsProvider = Provider.of<ProductsProvider>(context, listen: false);
-      productsProvider.loadCategories();
+      // Загружаем категории только если ещё не загружены
+      if (productsProvider.categories.isEmpty) {
+        productsProvider.loadCategories();
+      }
+      // Товары подгружаются всегда (учитывают фильтр/поиск), но лоадер только при первой загрузке
       productsProvider.loadProducts();
     });
   }
