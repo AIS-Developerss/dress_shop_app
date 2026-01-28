@@ -63,7 +63,7 @@ class ProductTile extends StatelessWidget {
             );
           },
           child: Container(
-            margin: const EdgeInsets.only(left: 25),
+            margin: const EdgeInsets.only(bottom: 25, left: 25, right: 25),
             width: 280,
             decoration: BoxDecoration(
               color: Colors.grey[100],
@@ -86,7 +86,7 @@ class ProductTile extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                         child: Image.asset(
                           product.imagePaths.first,
-                          height: 200,
+                          height: 260,
                           fit: BoxFit.cover,
                           width: double.infinity,
                         ),
@@ -116,7 +116,10 @@ class ProductTile extends StatelessWidget {
                 ),
                 // Description
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 24,
+                  ),
                   child: Text(
                     product.description,
                     style: TextStyle(color: Colors.grey[600]),

@@ -200,7 +200,7 @@ class _ShopPageState extends State<ShopPage> {
               Expanded(
                 child: ListView.builder(
                   itemCount: productsProvider.products.length,
-                  scrollDirection: Axis.horizontal,
+                  scrollDirection: Axis.vertical,
                   itemBuilder: (context, index) {
                     final product = productsProvider.products[index];
                     return ProductTile(
