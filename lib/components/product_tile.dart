@@ -5,6 +5,7 @@ import '../models/cart.dart';
 import '../providers/favorites_provider.dart';
 import '../providers/auth_provider.dart';
 import '../pages/product_detail_page.dart';
+import '../pages/full_screen_image_page.dart';
 
 class ProductTile extends StatelessWidget {
   final Product product;
@@ -74,13 +75,21 @@ class ProductTile extends StatelessWidget {
                 // Product image with favorite button
                 Stack(
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image.asset(
-                        product.imagePaths.first,
-                        height: 200,
-                        fit: BoxFit.cover,
-                        width: double.infinity,
+                    GestureDetector(
+                      onTap: () {
+                        FullScreenImagePage.open(
+                          context,
+                          imagePaths: product.imagePaths,
+                        );
+                      },
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.asset(
+                          product.imagePaths.first,
+                          height: 200,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                        ),
                       ),
                     ),
                     // Favorite button

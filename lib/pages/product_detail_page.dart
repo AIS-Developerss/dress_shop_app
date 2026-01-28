@@ -5,6 +5,7 @@ import '../models/cart.dart';
 import '../models/cart_item_model.dart';
 import '../providers/favorites_provider.dart';
 import '../providers/auth_provider.dart';
+import 'full_screen_image_page.dart';
 
 class ProductDetailPage extends StatefulWidget {
   final Product product;
@@ -104,7 +105,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image carousel
+            // Image carousel (tap to open full screen)
             SizedBox(
               height: 300,
               child: PageView.builder(
@@ -115,9 +116,18 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   });
                 },
                 itemBuilder: (context, index) {
-                  return Image.asset(
-                    widget.product.imagePaths[index],
-                    fit: BoxFit.contain,
+                  return GestureDetector(
+                    onTap: () {
+                      FullScreenImagePage.open(
+                        context,
+                        imagePaths: widget.product.imagePaths,
+                        initialIndex: index,
+                      );
+                    },
+                    child: Image.asset(
+                      widget.product.imagePaths[index],
+                      fit: BoxFit.contain,
+                    ),
                   );
                 },
               ),
