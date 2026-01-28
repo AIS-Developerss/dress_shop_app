@@ -1,59 +1,72 @@
 import 'package:flutter/material.dart';
-import 'package:dress_shop_app/models/shoe.dart';
+import 'cart_item_model.dart';
 
 class Cart extends ChangeNotifier {
-  //* list of shoes for sale
-  List<Shoe> shoeShop = [
-    Shoe(
-      name: "Air Jordans",
-      price: "14500",
-      description:
-          "У вас есть прыжки и скорость - зашнуруйте обувь, которая усилит то, что вы приносите на площадку",
-      imagePath: "assets/images/jordan.png",
-    ),
-    Shoe(
-      name: "KD Treys",
-      price: "20000",
-      description:
-          "Надежный ремешок на средней части стопы идеально подходит для забивания голов и защитных стоек, чтобы вы могли зафиксироваться и продолжать побеждать.",
-      imagePath: "assets/images/kdtrey.png",
-    ),
-    Shoe(
-      name: "Zoom FREAK",
-      price: "21000",
-      description: "Инновационный дизайн его последней фирменной обуви.",
-      imagePath: "assets/images/zoomfreak.png",
-    ),
-    Shoe(
-      name: "Zion 2",
-      price: "7000",
-      description:
-          "Достигните новых уровней скорости и силы в обуви, разработанной для Зиона и созданной для баскетболистов любого уровня.",
-      imagePath: "assets/images/zion2.png",
-    ),
-  ];
+  //* list of items in user cart
+  List<CartItemModel> userCart = [];
 
-  //* list of items in user card
-  List<Shoe> userCart = [];
-  //* get list of shoes for sale
-  List<Shoe> getShoeList() {
-    return shoeShop;
-  }
-
-  //* get card
-  List<Shoe> getUserCart() {
+  //* get cart
+  List<CartItemModel> getUserCart() {
     return userCart;
   }
 
-  //* add items to card
-  void addItemToCart(Shoe shoe) {
-    userCart.add(shoe);
+  //* get total price
+  String getTotalPrice() {
+    double total = 0;
+    for (var item in userCart) {
+      total += (double.tryParse(item.product.price) ?? 0) * item.quantity;
+    }
+    return total.toStringAsFixed(2);
+  }
+
+  //* add items to cart
+  void addItemToCart(CartItemModel item) {
+    // Check if same product with same size already exists
+    final existingIndex = userCart.indexWhere(
+      (cartItem) =>
+          cartItem.product.id == item.product.id &&
+          cartItem.selectedSize == item.selectedSize,
+    );
+
+    if (existingIndex != -1) {
+      // Increase quantity
+      userCart[existingIndex] = CartItemModel(
+        product: userCart[existingIndex].product,
+        selectedSize: userCart[existingIndex].selectedSize,
+        quantity: userCart[existingIndex].quantity + 1,
+      );
+    } else {
+      userCart.add(item);
+    }
     notifyListeners();
   }
 
-  //* remove item from card
-  void removeItemFromCart(Shoe shoe) {
-    userCart.remove(shoe);
+  //* remove item from cart
+  void removeItemFromCart(CartItemModel item) {
+    userCart.remove(item);
+    notifyListeners();
+  }
+
+  //* update quantity
+  void updateQuantity(CartItemModel item, int quantity) {
+    if (quantity <= 0) {
+      removeItemFromCart(item);
+      return;
+    }
+    final index = userCart.indexOf(item);
+    if (index != -1) {
+      userCart[index] = CartItemModel(
+        product: item.product,
+        selectedSize: item.selectedSize,
+        quantity: quantity,
+      );
+      notifyListeners();
+    }
+  }
+
+  //* clear cart
+  void clearCart() {
+    userCart.clear();
     notifyListeners();
   }
 }
