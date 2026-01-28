@@ -8,6 +8,7 @@ import 'favorites_page.dart';
 import 'orders_history_page.dart';
 import 'contact_page.dart';
 import 'auth_page.dart';
+import 'profile_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -25,7 +26,12 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  final List<Widget> _pages = [const ShopPage(), const CardPage()];
+  final List<Widget> _pages = [
+    const ShopPage(),
+    const FavoritesPage(),
+    const CardPage(),
+    const ProfilePage(),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +40,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Colors.grey[300],
       bottomNavigationBar: MyBottomNavBar(
+        currentIndex: _selectedIndex,
         onTabChange: (index) => navigateBottomBar(index),
       ),
       appBar: AppBar(
@@ -90,19 +97,14 @@ class _HomePageState extends State<HomePage> {
                 Padding(
                   padding: const EdgeInsets.only(left: 25.0),
                   child: ListTile(
-                    leading: const Icon(Icons.favorite, color: Colors.white),
+                    leading: const Icon(Icons.person, color: Colors.white),
                     title: const Text(
-                      "Избранное",
+                      "Профиль",
                       style: TextStyle(color: Colors.white),
                     ),
                     onTap: () {
                       Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const FavoritesPage(),
-                        ),
-                      );
+                      navigateBottomBar(3);
                     },
                   ),
                 ),
