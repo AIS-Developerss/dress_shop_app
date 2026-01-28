@@ -20,28 +20,25 @@ class _CardPageState extends State<CardPage> {
         padding: const EdgeInsets.symmetric(horizontal: 25.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Моя корзина",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 24,
-                  ),
-                ),
-                const SizedBox(height: 10),
-
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: value.getUserCart().length,
-                    itemBuilder: (BuildContext context, index) {
-                      Shoe individualShoe = value.getUserCart()[index];
-      
-                      return CartItem(shoe: individualShoe);
-                    },
-                  ),
-                )
-              ],
+          children: [
+            const Text(
+              "Моя корзина",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
             ),
+            const SizedBox(height: 10),
+
+            Expanded(
+              child: ListView.builder(
+                itemCount: value.getUserCart().length,
+                itemBuilder: (BuildContext context, index) {
+                  Shoe individualShoe = value.getUserCart()[index];
+
+                  return CartItem(shoe: individualShoe);
+                },
+              ),
+            ),
+          ],
+        ),
       )),
     );
   }
