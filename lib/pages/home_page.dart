@@ -56,7 +56,7 @@ class _HomePageState extends State<HomePage> {
                   child: Padding(
                     padding: const EdgeInsets.all(32.0),
                     child: Image.asset(
-                      "assets/images/nike.png",
+                      "assets/images/logo.png",
                       color: Colors.white,
                     ),
                   ),
@@ -70,7 +70,10 @@ class _HomePageState extends State<HomePage> {
                   padding: EdgeInsets.only(left: 25.0),
                   child: ListTile(
                     leading: Icon(Icons.home, color: Colors.white),
-                    title: Text("Главная", style: TextStyle(color: Colors.white)),
+                    title: Text(
+                      "Главная",
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ),
                 const Padding(

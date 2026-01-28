@@ -49,7 +49,7 @@ class _ShopPageState extends State<ShopPage> {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 25.0),
             child: Text(
-              "Все летают... некоторые летают дольше других.",
+              "Хорошая обувь ведёт дальше.",
               style: TextStyle(color: Colors.grey[600]),
             ),
           ),
