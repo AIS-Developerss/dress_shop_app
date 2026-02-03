@@ -1,148 +1,102 @@
 # Инструкция по переключению с моков на реальный API
 
-## Шаг 1: Обновите baseUrl в ApiService
+Переключение делается **в одном месте** — в `lib/main.dart`. Провайдеры получают общий `ApiClient`; менять их или страницы не нужно.
 
-Откройте файл `lib/services/api_service.dart` и измените базовый URL:
+---
 
-```dart
-ApiService({this.baseUrl = 'https://your-api-domain.com/api'});
-```
+## Вариант 1: Переключение на gRPC
 
-Замените `https://your-api-domain.com/api` на реальный URL вашего API.
+Когда бэкенд отдаёт API по gRPC (см. `proto/api.proto`):
 
-## Шаг 2: Замените MockApiService на ApiService
+### Шаг 1. Раскомментировать импорт
 
-Откройте файл `lib/main.dart` и найдите все места, где используется `MockApiService`, замените на `ApiService`.
-
-### В провайдерах:
-
-**lib/providers/auth_provider.dart:**
-```dart
-// Было:
-final MockApiService _apiService = MockApiService();
-
-// Стало:
-final ApiService _apiService = ApiService(baseUrl: 'https://your-api-domain.com/api');
-```
-
-**lib/providers/products_provider.dart:**
-```dart
-// Было:
-final MockApiService _apiService = MockApiService();
-
-// Стало:
-final ApiService _apiService = ApiService(baseUrl: 'https://your-api-domain.com/api');
-```
-
-**lib/providers/favorites_provider.dart:**
-```dart
-// Было:
-final MockApiService _apiService = MockApiService();
-
-// Стало:
-final ApiService _apiService = ApiService(baseUrl: 'https://your-api-domain.com/api');
-```
-
-**lib/providers/orders_provider.dart:**
-```dart
-// Было:
-final MockApiService _apiService = MockApiService();
-
-// Стало:
-final ApiService _apiService = ApiService(baseUrl: 'https://your-api-domain.com/api');
-```
-
-**lib/pages/contact_page.dart:**
-```dart
-// Было:
-final _apiService = MockApiService();
-
-// Стало:
-final _apiService = ApiService(baseUrl: 'https://your-api-domain.com/api');
-```
-
-## Шаг 3: Обновите импорты
-
-Во всех файлах, где используется `MockApiService`, замените импорт:
+В `lib/main.dart`:
 
 ```dart
 // Было:
-import '../services/mock_api_service.dart';
+// import 'services/grpc_api_service.dart'; // для gRPC: раскомментировать и использовать ниже
 
 // Стало:
-import '../services/api_service.dart';
+import 'services/grpc_api_service.dart';
 ```
 
-## Шаг 4: Добавьте сохранение токена
+### Шаг 2. Подставить GrpcApiService вместо MockApiService
 
-В `lib/providers/auth_provider.dart` добавьте сохранение токена в `ApiService`:
+В `lib/main.dart` в методе `build` класса `MyApp`:
 
 ```dart
-Future<bool> verifySms(String phone, String code) async {
-  // ... существующий код ...
-  if (response['success'] == true) {
-    _token = response['token'] as String;
-    _user = User.fromJson(response['user'] as Map<String, dynamic>);
-    
-    // Добавьте эту строку:
-    _apiService.setToken(_token!);
-    
-    // ... остальной код ...
-  }
-}
+// Было:
+final ApiClient apiClient = MockApiService();
+
+// Стало (подставьте свой хост и порт):
+final ApiClient apiClient = GrpcApiService(
+  host: 'your-server.com',   // адрес gRPC-сервера (или localhost для локальной разработки)
+  port: 50051,                // порт (50051 — типичный для gRPC)
+  useTls: false,              // true, если сервер по TLS/HTTPS
+);
 ```
 
-## Шаг 5: Установите зависимости
+Пример для локального сервера:
 
-Убедитесь, что пакет `http` установлен. Выполните:
-
-```bash
-flutter pub get
+```dart
+final ApiClient apiClient = GrpcApiService(
+  host: 'localhost',
+  port: 50051,
+  useTls: false,
+);
 ```
 
-## Шаг 6: Проверьте API документацию
+Готово. Токен после входа уже передаётся в gRPC (через `setToken` в `AuthProvider`).
 
-Убедитесь, что ваш бэкенд соответствует API документации в файле `API_DOCUMENTATION.md`.
+---
 
-## Шаг 7: Тестирование
+## Вариант 2: Переключение на REST (HTTP + JSON)
 
-После переключения протестируйте все функции:
-- ✅ Регистрация и вход
-- ✅ Просмотр товаров
-- ✅ Поиск и фильтрация по категориям
-- ✅ Добавление в избранное
-- ✅ Добавление в корзину
-- ✅ Оформление заказа
-- ✅ История заказов
-- ✅ Связь с нами
+Если бэкенд отдаёт REST API (как в `API_DOCUMENTATION.md`), нужно:
+
+1. **Реализовать в `ApiService` интерфейс `ApiClient`**  
+   В `lib/services/api_service.dart` сделать `class ApiService extends ApiClient` и добавить `@override` ко всем методам (сигнатуры уже совпадают). При необходимости добавить туда же `setToken` и использование токена в заголовках.
+
+2. **Переключить в `main.dart`:**
+
+```dart
+import 'services/api_service.dart';
+
+// В build():
+final ApiClient apiClient = ApiService(baseUrl: 'https://your-api-domain.com/api');
+```
+
+Провайдеры и страницы менять не нужно — они работают с `ApiClient`.
+
+---
+
+## Проверка после переключения
+
+После переключения на реальный API (gRPC или REST) проверьте:
+
+- Регистрация и вход (SMS, верификация, токен)
+- Список товаров и категорий
+- Поиск и фильтр по категориям
+- Избранное (добавить/удалить)
+- Корзина и оформление заказа
+- История заказов
+- Форма «Связь с нами»
+
+---
 
 ## Важные замечания
 
-1. **Обработка ошибок**: Реальный API может возвращать ошибки. Убедитесь, что все методы обрабатывают ошибки корректно.
+1. **gRPC**: Бэкенд должен реализовывать те же сервисы и RPC, что в `proto/api.proto`. Пути вида `/dress_shop.v1.AuthService/SendSms` и т.п.
 
-2. **Токен авторизации**: Токен должен сохраняться и передаваться во всех запросах, требующих авторизации.
+2. **Токен**: После успешного входа токен передаётся в API через `setToken` (gRPC — в metadata, REST — в заголовке `Authorization`).
 
-3. **Формат дат**: Убедитесь, что формат дат соответствует ISO 8601.
+3. **Ошибки**: Реальный API может возвращать ошибки и таймауты. При необходимости добавьте обработку в провайдерах или в `GrpcApiService`/`ApiService`.
 
-4. **Изображения**: URL изображений должны быть полными (с http/https).
+4. **Конфиг**: Хост/порт или baseUrl можно вынести в конфиг или переменные окружения, а в `main.dart` только подставлять их в `GrpcApiService(...)` или `ApiService(...)`.
 
-5. **Телефон**: Формат телефона должен быть единообразным (например, +79991234567).
+---
 
-## Альтернативный подход: Использование конфигурации
+## Дополнительно: gRPC и proto
 
-Вы можете создать файл конфигурации для переключения между моками и реальным API:
-
-**lib/config/app_config.dart:**
-```dart
-class AppConfig {
-  static const bool useMockApi = false; // Измените на false для реального API
-  static const String apiBaseUrl = 'https://your-api-domain.com/api';
-}
-```
-
-Затем в провайдерах:
-```dart
-final apiService = AppConfig.useMockApi 
-    ? MockApiService() 
-    : ApiService(baseUrl: AppConfig.apiBaseUrl);
-```
+- Описание API: `proto/api.proto`
+- Регенерация Dart-кода после изменений proto: `.\scripts\generate_grpc.ps1` (см. `GRPC_MIGRATION.md`)

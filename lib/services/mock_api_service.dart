@@ -1,17 +1,18 @@
 import '../models/product.dart';
 import '../models/category.dart';
-import '../models/user.dart';
 import '../models/order.dart';
 import '../models/favorite.dart';
+import 'api_client.dart';
 
-/// Mock API Service - замените на реальный API сервис
-/// Для переключения на реальный API просто замените реализацию методов
-class MockApiService {
+/// Mock API Service — локальная заглушка без бэкенда.
+/// Реализует [ApiClient]; для переключения на gRPC используйте [GrpcApiService] в main.dart.
+class MockApiService extends ApiClient {
   // ============ AUTH ============
 
   /// POST /api/auth/send-sms
   /// Body: { "phone": "+79991234567" }
   /// Response: { "success": true, "message": "SMS sent" }
+  @override
   Future<Map<String, dynamic>> sendSms(String phone) async {
     await Future.delayed(const Duration(seconds: 1));
     return {'success': true, 'message': 'SMS sent'};
@@ -20,6 +21,7 @@ class MockApiService {
   /// POST /api/auth/verify-sms
   /// Body: { "phone": "+79991234567", "code": "1234" }
   /// Response: { "success": true, "token": "jwt_token", "user": {...} }
+  @override
   Future<Map<String, dynamic>> verifySms(String phone, String code) async {
     await Future.delayed(const Duration(seconds: 1));
     return {
@@ -32,6 +34,7 @@ class MockApiService {
   /// POST /api/auth/register
   /// Body: { "name": "Иван", "phone": "+79991234567" }
   /// Response: { "success": true, "message": "Registration successful, SMS sent" }
+  @override
   Future<Map<String, dynamic>> register(String name, String phone) async {
     await Future.delayed(const Duration(seconds: 1));
     return {'success': true, 'message': 'Registration successful, SMS sent'};
@@ -41,6 +44,7 @@ class MockApiService {
 
   /// GET /api/products?categoryId=xxx&search=xxx
   /// Response: { "products": [...] }
+  @override
   Future<List<Product>> getProducts({
     String? categoryId,
     String? search,
@@ -59,6 +63,7 @@ class MockApiService {
 
   /// GET /api/products/:id
   /// Response: { "product": {...} }
+  @override
   Future<Product?> getProduct(String id) async {
     await Future.delayed(const Duration(milliseconds: 500));
     return _mockProducts.firstWhere(
@@ -71,6 +76,7 @@ class MockApiService {
 
   /// GET /api/categories
   /// Response: { "categories": [...] }
+  @override
   Future<List<Category>> getCategories() async {
     await Future.delayed(const Duration(milliseconds: 500));
     return _mockCategories;
@@ -80,6 +86,7 @@ class MockApiService {
 
   /// GET /api/favorites?userId=xxx
   /// Response: { "favorites": [...] }
+  @override
   Future<List<Favorite>> getFavorites(String userId) async {
     await Future.delayed(const Duration(milliseconds: 500));
     return _mockFavorites.where((f) => f.userId == userId).toList();
@@ -88,6 +95,7 @@ class MockApiService {
   /// POST /api/favorites
   /// Body: { "userId": "xxx", "productId": "xxx" }
   /// Response: { "success": true, "favorite": {...} }
+  @override
   Future<Favorite> addFavorite(String userId, String productId) async {
     await Future.delayed(const Duration(milliseconds: 500));
     final favorite = Favorite(
@@ -101,6 +109,7 @@ class MockApiService {
 
   /// DELETE /api/favorites/:id
   /// Response: { "success": true }
+  @override
   Future<bool> removeFavorite(String favoriteId) async {
     await Future.delayed(const Duration(milliseconds: 500));
     _mockFavorites.removeWhere((f) => f.id == favoriteId);
@@ -112,6 +121,7 @@ class MockApiService {
   /// POST /api/orders
   /// Body: { "userId": "xxx", "items": [...], "deliveryAddress": "...", "phone": "...", "name": "..." }
   /// Response: { "success": true, "order": {...} }
+  @override
   Future<Order> createOrder({
     required String userId,
     required List<OrderItem> items,
@@ -145,6 +155,7 @@ class MockApiService {
 
   /// GET /api/orders?userId=xxx
   /// Response: { "orders": [...] }
+  @override
   Future<List<Order>> getOrders(String userId) async {
     await Future.delayed(const Duration(milliseconds: 500));
     return _mockOrders.where((o) => o.userId == userId).toList();
@@ -152,6 +163,7 @@ class MockApiService {
 
   /// GET /api/orders/:id
   /// Response: { "order": {...} }
+  @override
   Future<Order?> getOrder(String id) async {
     await Future.delayed(const Duration(milliseconds: 500));
     return _mockOrders.firstWhere(
@@ -165,6 +177,7 @@ class MockApiService {
   /// POST /api/contact
   /// Body: { "name": "...", "phone": "...", "message": "..." }
   /// Response: { "success": true, "message": "Message sent" }
+  @override
   Future<Map<String, dynamic>> sendContactMessage({
     required String name,
     required String phone,

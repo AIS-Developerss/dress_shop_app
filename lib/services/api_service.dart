@@ -2,10 +2,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/product.dart';
 import '../models/category.dart';
-import '../models/user.dart';
 import '../models/order.dart';
 import '../models/favorite.dart';
-import 'mock_api_service.dart';
 
 /// Реальный API Service - раскомментируйте и используйте когда бэкенд готов
 /// Для переключения с моков на реальный API просто замените MockApiService на ApiService в main.dart

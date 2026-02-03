@@ -1,0 +1,219 @@
+syntax = "proto3";
+
+package dress_shop.v1;
+
+// ============ Common messages ============
+
+message User {
+  string id = 1;
+  string name = 2;
+  string phone = 3;
+  string email = 4;  // optional, empty = null
+}
+
+message Product {
+  string id = 1;
+  string name = 2;
+  string price = 3;
+  string description = 4;
+  repeated string image_paths = 5;
+  string category_id = 6;
+  map<string, string> characteristics = 7;
+  repeated string available_sizes = 8;
+  int32 stock = 9;
+}
+
+message Category {
+  string id = 1;
+  string name = 2;
+  string icon = 3;  // optional, empty = null
+}
+
+message Favorite {
+  string id = 1;
+  string user_id = 2;
+  string product_id = 3;
+}
+
+message OrderItem {
+  string product_id = 1;
+  string product_name = 2;
+  string size = 3;
+  int32 quantity = 4;
+  string price = 5;
+  string image_path = 6;
+}
+
+message Order {
+  string id = 1;
+  string user_id = 2;
+  repeated OrderItem items = 3;
+  string total_price = 4;
+  string status = 5;
+  string created_at = 6;  // ISO 8601
+  string delivery_address = 7;
+  string phone = 8;
+  string name = 9;
+}
+
+// ============ Auth ============
+
+message SendSmsRequest {
+  string phone = 1;
+}
+
+message SendSmsResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message VerifySmsRequest {
+  string phone = 1;
+  string code = 2;
+}
+
+message VerifySmsResponse {
+  bool success = 1;
+  string token = 2;
+  User user = 3;
+}
+
+message RegisterRequest {
+  string name = 1;
+  string phone = 2;
+}
+
+message RegisterResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// ============ Products ============
+
+message GetProductsRequest {
+  string category_id = 1;  // empty = no filter
+  string search = 2;
+}
+
+message GetProductsResponse {
+  repeated Product products = 1;
+}
+
+message GetProductRequest {
+  string id = 1;
+}
+
+message GetProductResponse {
+  Product product = 1;
+}
+
+// ============ Categories ============
+
+message GetCategoriesRequest {}
+
+message GetCategoriesResponse {
+  repeated Category categories = 1;
+}
+
+// ============ Favorites ============
+
+message GetFavoritesRequest {
+  string user_id = 1;
+}
+
+message GetFavoritesResponse {
+  repeated Favorite favorites = 1;
+}
+
+message AddFavoriteRequest {
+  string user_id = 1;
+  string product_id = 2;
+}
+
+message AddFavoriteResponse {
+  Favorite favorite = 1;
+}
+
+message RemoveFavoriteRequest {
+  string favorite_id = 1;
+}
+
+message RemoveFavoriteResponse {
+  bool success = 1;
+}
+
+// ============ Orders ============
+
+message CreateOrderRequest {
+  string user_id = 1;
+  repeated OrderItem items = 2;
+  string delivery_address = 3;
+  string phone = 4;
+  string name = 5;
+}
+
+message CreateOrderResponse {
+  Order order = 1;
+}
+
+message GetOrdersRequest {
+  string user_id = 1;
+}
+
+message GetOrdersResponse {
+  repeated Order orders = 1;
+}
+
+message GetOrderRequest {
+  string id = 1;
+}
+
+message GetOrderResponse {
+  Order order = 1;
+}
+
+// ============ Contact ============
+
+message SendContactMessageRequest {
+  string name = 1;
+  string phone = 2;
+  string message = 3;
+}
+
+message SendContactMessageResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// ============ Services ============
+
+service AuthService {
+  rpc SendSms(SendSmsRequest) returns (SendSmsResponse);
+  rpc VerifySms(VerifySmsRequest) returns (VerifySmsResponse);
+  rpc Register(RegisterRequest) returns (RegisterResponse);
+}
+
+service ProductService {
+  rpc GetProducts(GetProductsRequest) returns (GetProductsResponse);
+  rpc GetProduct(GetProductRequest) returns (GetProductResponse);
+}
+
+service CategoryService {
+  rpc GetCategories(GetCategoriesRequest) returns (GetCategoriesResponse);
+}
+
+service FavoriteService {
+  rpc GetFavorites(GetFavoritesRequest) returns (GetFavoritesResponse);
+  rpc AddFavorite(AddFavoriteRequest) returns (AddFavoriteResponse);
+  rpc RemoveFavorite(RemoveFavoriteRequest) returns (RemoveFavoriteResponse);
+}
+
+service OrderService {
+  rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
+  rpc GetOrders(GetOrdersRequest) returns (GetOrdersResponse);
+  rpc GetOrder(GetOrderRequest) returns (GetOrderResponse);
+}
+
+service ContactService {
+  rpc SendContactMessage(SendContactMessageRequest) returns (SendContactMessageResponse);
+}

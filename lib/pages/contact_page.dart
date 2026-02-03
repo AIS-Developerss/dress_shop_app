@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../services/mock_api_service.dart';
+import 'package:provider/provider.dart';
+import '../services/api_client.dart';
 
 class ContactPage extends StatefulWidget {
   const ContactPage({super.key});
@@ -14,7 +15,6 @@ class _ContactPageState extends State<ContactPage> {
   final _messageController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
-  final _apiService = MockApiService();
 
   @override
   void dispose() {
@@ -34,7 +34,8 @@ class _ContactPageState extends State<ContactPage> {
     });
 
     try {
-      await _apiService.sendContactMessage(
+      final api = context.read<ApiClient>();
+      await api.sendContactMessage(
         name: _nameController.text,
         phone: _phoneController.text,
         message: _messageController.text,

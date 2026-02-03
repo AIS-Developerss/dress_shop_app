@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import '../models/product.dart';
 import '../models/category.dart';
-import '../services/mock_api_service.dart';
+import '../services/api_client.dart';
 
 class ProductsProvider extends ChangeNotifier {
-  final MockApiService _apiService = MockApiService();
+  final ApiClient _apiService;
+
+  ProductsProvider(this._apiService);
   List<Product> _products = [];
   List<Category> _categories = [];
   String? _selectedCategoryId;

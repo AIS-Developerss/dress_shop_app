@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import '../models/user.dart';
-import '../services/mock_api_service.dart';
+import '../services/api_client.dart';
 
 class AuthProvider extends ChangeNotifier {
-  final MockApiService _apiService = MockApiService();
+  final ApiClient _apiService;
+
+  AuthProvider(this._apiService);
   User? _user;
   String? _token;
   bool _isLoading = false;
@@ -51,6 +53,7 @@ class AuthProvider extends ChangeNotifier {
       if (response['success'] == true) {
         _token = response['token'] as String;
         _user = User.fromJson(response['user'] as Map<String, dynamic>);
+        _apiService.setToken(_token);
         _isLoading = false;
         notifyListeners();
         return true;
@@ -68,6 +71,7 @@ class AuthProvider extends ChangeNotifier {
   void logout() {
     _user = null;
     _token = null;
+    _apiService.setToken(null);
     notifyListeners();
   }
 }

@@ -1,6 +1,9 @@
 # API Документация для Dress Shop App
 
-## Базовый URL
+> **Для бэкенда (gRPC):** контракт — в **`proto/api.proto`**. Что передать бэкендерам и как подключаться — см. **`BACKEND_CONTRACT.md`**. Ниже — описание логики и полей в удобочитаемом виде (REST-формат для справки).
+
+## Базовый URL (REST; для gRPC см. proto)
+
 ```
 https://your-api-domain.com/api
 ```
@@ -8,6 +11,7 @@ https://your-api-domain.com/api
 ## Аутентификация
 
 Все запросы, кроме регистрации и отправки SMS, требуют заголовок:
+
 ```
 Authorization: Bearer {token}
 ```
@@ -17,9 +21,11 @@ Authorization: Bearer {token}
 ## 1. Авторизация и Регистрация
 
 ### 1.1. Регистрация
+
 **POST** `/auth/register`
 
 **Request Body:**
+
 ```json
 {
   "name": "Иван Иванов",
@@ -28,6 +34,7 @@ Authorization: Bearer {token}
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -36,9 +43,11 @@ Authorization: Bearer {token}
 ```
 
 ### 1.2. Отправка SMS кода
+
 **POST** `/auth/send-sms`
 
 **Request Body:**
+
 ```json
 {
   "phone": "+79991234567"
@@ -46,6 +55,7 @@ Authorization: Bearer {token}
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -54,9 +64,11 @@ Authorization: Bearer {token}
 ```
 
 ### 1.3. Проверка SMS кода
+
 **POST** `/auth/verify-sms`
 
 **Request Body:**
+
 ```json
 {
   "phone": "+79991234567",
@@ -65,6 +77,7 @@ Authorization: Bearer {token}
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -83,13 +96,16 @@ Authorization: Bearer {token}
 ## 2. Товары
 
 ### 2.1. Получить список товаров
+
 **GET** `/products?categoryId={categoryId}&search={search}`
 
 **Query Parameters:**
+
 - `categoryId` (optional) - ID категории для фильтрации
 - `search` (optional) - Поисковый запрос
 
 **Response:**
+
 ```json
 {
   "products": [
@@ -117,9 +133,11 @@ Authorization: Bearer {token}
 ```
 
 ### 2.2. Получить товар по ID
+
 **GET** `/products/{id}`
 
 **Response:**
+
 ```json
 {
   "product": {
@@ -149,9 +167,11 @@ Authorization: Bearer {token}
 ## 3. Категории
 
 ### 3.1. Получить список категорий
+
 **GET** `/categories`
 
 **Response:**
+
 ```json
 {
   "categories": [
@@ -174,12 +194,15 @@ Authorization: Bearer {token}
 ## 4. Избранное
 
 ### 4.1. Получить избранное пользователя
+
 **GET** `/favorites?userId={userId}`
 
 **Query Parameters:**
+
 - `userId` (required) - ID пользователя
 
 **Response:**
+
 ```json
 {
   "favorites": [
@@ -193,9 +216,11 @@ Authorization: Bearer {token}
 ```
 
 ### 4.2. Добавить в избранное
+
 **POST** `/favorites`
 
 **Request Body:**
+
 ```json
 {
   "userId": "user_123",
@@ -204,6 +229,7 @@ Authorization: Bearer {token}
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -216,9 +242,11 @@ Authorization: Bearer {token}
 ```
 
 ### 4.3. Удалить из избранного
+
 **DELETE** `/favorites/{favoriteId}`
 
 **Response:**
+
 ```json
 {
   "success": true
@@ -230,9 +258,11 @@ Authorization: Bearer {token}
 ## 5. Заказы
 
 ### 5.1. Создать заказ
+
 **POST** `/orders`
 
 **Request Body:**
+
 ```json
 {
   "userId": "user_123",
@@ -253,6 +283,7 @@ Authorization: Bearer {token}
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -280,12 +311,15 @@ Authorization: Bearer {token}
 ```
 
 ### 5.2. Получить список заказов пользователя
+
 **GET** `/orders?userId={userId}`
 
 **Query Parameters:**
+
 - `userId` (required) - ID пользователя
 
 **Response:**
+
 ```json
 {
   "orders": [
@@ -314,6 +348,7 @@ Authorization: Bearer {token}
 ```
 
 **Статусы заказа:**
+
 - `pending` - В обработке
 - `confirmed` - Подтвержден
 - `shipped` - Отправлен
@@ -321,9 +356,11 @@ Authorization: Bearer {token}
 - `cancelled` - Отменен
 
 ### 5.3. Получить заказ по ID
+
 **GET** `/orders/{id}`
 
 **Response:**
+
 ```json
 {
   "order": {
@@ -354,9 +391,11 @@ Authorization: Bearer {token}
 ## 6. Связь с нами
 
 ### 6.1. Отправить сообщение
+
 **POST** `/contact`
 
 **Request Body:**
+
 ```json
 {
   "name": "Иван Иванов",
@@ -366,6 +405,7 @@ Authorization: Bearer {token}
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -378,6 +418,7 @@ Authorization: Bearer {token}
 ## Модели данных
 
 ### User
+
 ```json
 {
   "id": "string",
@@ -388,6 +429,7 @@ Authorization: Bearer {token}
 ```
 
 ### Product
+
 ```json
 {
   "id": "string",
@@ -405,6 +447,7 @@ Authorization: Bearer {token}
 ```
 
 ### Category
+
 ```json
 {
   "id": "string",
@@ -414,6 +457,7 @@ Authorization: Bearer {token}
 ```
 
 ### Favorite
+
 ```json
 {
   "id": "string",
@@ -423,6 +467,7 @@ Authorization: Bearer {token}
 ```
 
 ### OrderItem
+
 ```json
 {
   "productId": "string",
@@ -435,6 +480,7 @@ Authorization: Bearer {token}
 ```
 
 ### Order
+
 ```json
 {
   "id": "string",
@@ -459,6 +505,7 @@ Authorization: Bearer {token}
 - `500` - Internal Server Error (ошибка сервера)
 
 ## Формат ошибки
+
 ```json
 {
   "success": false,

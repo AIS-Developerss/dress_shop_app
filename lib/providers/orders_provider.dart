@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import '../models/order.dart';
-import '../services/mock_api_service.dart';
+import '../services/api_client.dart';
 
 class OrdersProvider extends ChangeNotifier {
-  final MockApiService _apiService = MockApiService();
+  final ApiClient _apiService;
+
+  OrdersProvider(this._apiService);
   List<Order> _orders = [];
   bool _isLoading = false;
 

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import '../models/favorite.dart';
 import '../models/product.dart';
-import '../services/mock_api_service.dart';
+import '../services/api_client.dart';
 
 class FavoritesProvider extends ChangeNotifier {
-  final MockApiService _apiService = MockApiService();
+  final ApiClient _apiService;
+
+  FavoritesProvider(this._apiService);
   List<Favorite> _favorites = [];
   List<Product> _favoriteProducts = [];
   bool _isLoading = false;
