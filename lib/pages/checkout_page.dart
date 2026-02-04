@@ -55,9 +55,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
     }
 
     if (cart.userCart.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Корзина пуста')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Корзина пуста')));
       return;
     }
 
@@ -91,7 +91,11 @@ class _CheckoutPageState extends State<CheckoutPage> {
     if (order != null) {
       cart.clearCart();
       if (mounted) {
-        Navigator.pushReplacementNamed(context, '/order-success', arguments: order);
+        Navigator.pushReplacementNamed(
+          context,
+          '/order-success',
+          arguments: order,
+        );
       }
     } else {
       if (mounted) {
@@ -235,7 +239,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                     TextFormField(
                       controller: _addressController,
                       decoration: InputDecoration(
-                        labelText: 'Адрес доставки',
+                        hintText: 'Адрес доставки',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -294,7 +298,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
                           ),
                         ),
                         child: _isLoading
-                            ? const CircularProgressIndicator(color: Colors.white)
+                            ? const CircularProgressIndicator(
+                                color: Colors.white,
+                              )
                             : const Text(
                                 'Оформить заказ',
                                 style: TextStyle(
